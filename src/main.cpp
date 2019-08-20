@@ -3,7 +3,7 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 const int httpPort = 80;
-String deviceName = "esp8266 Switch";
+String deviceName = "斐讯DC1插排";
 String version = "1.0";
 ESP8266WebServer server(httpPort);
 // 开关的状态表示
