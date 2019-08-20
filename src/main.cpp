@@ -7,8 +7,8 @@ String deviceName = "斐讯DC1插排";
 String version = "1.0";
 ESP8266WebServer server(httpPort);
 // 开关的状态表示
-const int on = 1;
-const int off = 0;
+const int on = 0;
+const int off = 1;
 // 看你的继电器是连接那个io，默认gpio0
 const int logLed = 14;
 const int wifiLed = 0;
@@ -117,7 +117,7 @@ void handleNotFound(){
 }
 
 void setup(void){
-  // 开关状态初始化为开
+    // 开关状态初始化为开
   pinMode(logLed, OUTPUT);
   digitalWrite(logLed, on);
   pinMode(wifiLed, OUTPUT);
