@@ -9,9 +9,6 @@
 #define SDA_PIN      3
 #define SCL_PIN      12
 
-#define ON   LOW
-#define OFF  HIGH
-
 CSE7766 myCSE7766;
 const int httpPort = 80;
 String deviceName = "斐讯DC1插排";
@@ -22,7 +19,6 @@ ESP8266WebServer server(httpPort);
 // 看你的继电器是连接那个io，默认gpio0
 const int logLed = 14;
 const int wifiLed = 0;
-const int primarySwitch = 16;
 // 插口
 const int plugin4 = 4;
 const int plugin5 = 5;
@@ -30,15 +26,14 @@ const int plugin6 = 6;
 // 总开关
 const int plugin7 = 7;
 // 开关的当前状态
-int logLedStatus = ON;
-int wifiLedStatus = ON;
-int primarySwitchStatus = ON;
+bool logLedStatus = true;
+bool wifiLedStatus = true;
 // 插口
-int plugin4Status = ON;
-int plugin5Status = ON;
-int plugin6Status = ON;
+bool plugin4Status = true;
+bool plugin5Status = true;
+bool plugin6Status = true;
 // 总开关
-int plugin7Status = 7;
+bool plugin7Status = true;
 
 // digitalWrite(led1, on);
 
@@ -55,55 +50,55 @@ void handleSwitchStatusChange(){
       // 开启
       if (server.arg(i)=="logLed")
       {
-        digitalWrite(logLed, ON);
-        logLedStatus = ON;
+        digitalWrite(logLed, LOW);
+        logLedStatus = true;
       }else if (server.arg(i)=="wifiLed")
       {
-        digitalWrite(wifiLed, ON);
-        wifiLedStatus = ON;
+        digitalWrite(wifiLed, LOW);
+        wifiLedStatus = true;
       }else if (server.arg(i)=="plugin4")
       {
-        CAT9554.digitalWrite(plugin4, ON);
-        plugin4Status = ON;
+        CAT9554.digitalWrite(plugin4, HIGH);
+        plugin4Status = true;
       }else if (server.arg(i)=="plugin5")
       {
-        CAT9554.digitalWrite(plugin5, ON);
-        plugin5Status = ON;
+        CAT9554.digitalWrite(plugin5, HIGH);
+        plugin5Status = true;
       }else if (server.arg(i)=="plugin6")
       {
-        CAT9554.digitalWrite(plugin6, ON);
-        plugin6Status = ON;
+        CAT9554.digitalWrite(plugin6, HIGH);
+        plugin6Status = true;
       }else if (server.arg(i)=="plugin7")
       {
-        CAT9554.digitalWrite(plugin7, ON);
-        plugin7Status = ON;
+        CAT9554.digitalWrite(plugin7, HIGH);
+        plugin7Status = true;
       }
     }else if (server.argName(i)=="off"){
       // 关闭
       if (server.arg(i)=="logLed")
       {
-        digitalWrite(logLed, OFF);
-        logLedStatus = OFF;
+        digitalWrite(logLed, HIGH);
+        logLedStatus = false;
       }else if (server.arg(i)=="wifiLed")
       {
-        digitalWrite(wifiLed, OFF);
-        wifiLedStatus = OFF;
+        digitalWrite(wifiLed, HIGH);
+        wifiLedStatus = false;
       }else if (server.arg(i)=="plugin4")
       {
-        CAT9554.digitalWrite(plugin4, OFF);
-        plugin4Status = OFF;
+        CAT9554.digitalWrite(plugin4, LOW);
+        plugin4Status = false;
       }else if (server.arg(i)=="plugin5")
       {
-        CAT9554.digitalWrite(plugin5, OFF);
-        plugin5Status = OFF;
+        CAT9554.digitalWrite(plugin5, LOW);
+        plugin5Status = false;
       }else if (server.arg(i)=="plugin6")
       {
-        CAT9554.digitalWrite(plugin6, OFF);
-        plugin6Status = OFF;
+        CAT9554.digitalWrite(plugin6, LOW);
+        plugin6Status = false;
       }else if (server.arg(i)=="plugin7")
       {
-        CAT9554.digitalWrite(plugin7, OFF);
-        plugin7Status = OFF;
+        CAT9554.digitalWrite(plugin7, LOW);
+        plugin7Status = false;
       }
     }
   }
@@ -151,7 +146,10 @@ void handleCurrentLEDStatus(){
   String message;
   message = "{\"logLed\":"+String(logLedStatus)+
   ",\"wifiLed\":"+String(wifiLedStatus)+
-  ",\"primarySwitch\":"+String(primarySwitchStatus)+
+  ",\"plugin4\":"+String(plugin4Status)+
+  ",\"plugin5\":"+String(plugin5Status)+
+  ",\"plugin6\":"+String(plugin6Status)+
+  ",\"plugin7\":"+String(plugin7Status)+
   ",\"code\":0,\"message\":\"success\"}";
   server.send(200, "application/json", message);
 }
@@ -204,20 +202,18 @@ void setup(void){
   CAT9554.pinMode(2, INPUT);
 
   CAT9554.pinMode(4, OUTPUT);
-  CAT9554.digitalWrite(4, ON);
+  CAT9554.digitalWrite(4, HIGH);
   CAT9554.pinMode(5, OUTPUT);
-  CAT9554.digitalWrite(5, ON);
+  CAT9554.digitalWrite(5, HIGH);
   CAT9554.pinMode(6, OUTPUT);
-  CAT9554.digitalWrite(6, ON);
+  CAT9554.digitalWrite(6, HIGH);
   CAT9554.pinMode(7, OUTPUT);
-  CAT9554.digitalWrite(7, ON);
+  CAT9554.digitalWrite(7, HIGH);
     // 开关状态初始化为开
   pinMode(logLed, OUTPUT);
-  digitalWrite(logLed, ON);
+  digitalWrite(logLed, LOW);
   pinMode(wifiLed, OUTPUT);
-  digitalWrite(wifiLed, ON);
-  pinMode(primarySwitch, OUTPUT);
-  digitalWrite(primarySwitch, ON);
+  digitalWrite(wifiLed, LOW);
 
   // Serial.begin(115200);
   WiFi.mode(WIFI_STA);
