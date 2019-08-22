@@ -2,6 +2,9 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#include <CSE7766.h>
+
+CSE7766 myCSE7766;
 const int httpPort = 80;
 String deviceName = "斐讯DC1插排";
 String version = "1.0";
@@ -72,6 +75,33 @@ void handleDeviceRename(){
   }
   server.send(200, "application/json", message);
 }
+// 电力芯片cse7766
+void handleCSE7766(){
+  double value = 0;
+  for (uint8_t i=0; i<server.args(); i++){
+    if (server.argName(i)=="type")
+    {
+      if (server.arg(i)=="getVoltage"){
+        value = myCSE7766.getVoltage();
+      }else if (server.arg(i)=="getCurrent"){
+        value = myCSE7766.getCurrent();
+      }else if (server.arg(i)=="getActivePower"){
+        value = myCSE7766.getActivePower();
+      }else if (server.arg(i)=="getApparentPower"){
+        value = myCSE7766.getApparentPower();
+      }else if (server.arg(i)=="getReactivePower"){
+        value = myCSE7766.getReactivePower();
+      }else if (server.arg(i)=="getPowerFactor"){
+        value = myCSE7766.getPowerFactor();
+      }else if (server.arg(i)=="getEnergy"){
+        value = myCSE7766.getEnergy();
+      }
+    }
+  }
+  String message = "{\"code\":0,\"value\":"+String(value)+",\"message\":\"success\"}";
+  server.send(200, "application/json", message);
+}
+
 // 当前的LED开关状态API
 void handleCurrentLEDStatus(){
   String message;
@@ -117,6 +147,8 @@ void handleNotFound(){
 }
 
 void setup(void){
+  myCSE7766.setRX(13);
+  myCSE7766.begin();
     // 开关状态初始化为开
   pinMode(logLed, OUTPUT);
   digitalWrite(logLed, on);
@@ -154,6 +186,9 @@ void setup(void){
   server.on("/status", handleCurrentLEDStatus);
   // about this device
   server.on("/info", handleDeviceInfo);
+
+  server.on("/cse7766", handleCSE7766);
+
   server.onNotFound(handleNotFound);
 
   server.begin();
