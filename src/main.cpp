@@ -3,6 +3,11 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <CSE7766.h>
+#include <CAT9554.h>
+#include <Wire.h>
+
+#define SDA_PIN      3
+#define SCL_PIN      12
 
 CSE7766 myCSE7766;
 const int httpPort = 80;
@@ -147,8 +152,21 @@ void handleNotFound(){
 }
 
 void setup(void){
+  // 电力芯片
   myCSE7766.setRX(13);
   myCSE7766.begin();
+  // IO扩展
+  Wire.begin(SDA_PIN, SCL_PIN);
+  Wire.setClock(20000);
+  CAT9554.begin();
+  // CAT9554.begin(SDA_PIN, SCL_PIN);
+  CAT9554.pinMode(0, INPUT);
+  CAT9554.pinMode(1, INPUT);
+  CAT9554.pinMode(2, INPUT);
+  CAT9554.pinMode(4, OUTPUT);
+  CAT9554.pinMode(5, OUTPUT);
+  CAT9554.pinMode(6, OUTPUT);
+  CAT9554.pinMode(7, OUTPUT);
     // 开关状态初始化为开
   pinMode(logLed, OUTPUT);
   digitalWrite(logLed, on);
@@ -200,4 +218,14 @@ void loop(void){
   MDNS.update();
   server.handleClient();
   myCSE7766.handle();
+
+  // CAT9554.digitalWrite(4, HIGH);
+  // CAT9554.digitalWrite(5, HIGH);
+  // CAT9554.digitalWrite(6, HIGH);
+  // CAT9554.digitalWrite(7, HIGH);
+  // delay(100);
+  // CAT9554.digitalWrite(4, LOW);
+  // CAT9554.digitalWrite(5, LOW);
+  // CAT9554.digitalWrite(6, LOW);
+  // CAT9554.digitalWrite(7, LOW);
 }
