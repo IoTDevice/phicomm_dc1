@@ -199,4 +199,5 @@ void setup(void){
 void loop(void){
   MDNS.update();
   server.handleClient();
+  myCSE7766.handle();
 }
