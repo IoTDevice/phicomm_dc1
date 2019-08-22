@@ -9,22 +9,37 @@
 #define SDA_PIN      3
 #define SCL_PIN      12
 
+#define ON   LOW
+#define OFF  HIGH
+
 CSE7766 myCSE7766;
 const int httpPort = 80;
 String deviceName = "斐讯DC1插排";
 String version = "1.0";
 ESP8266WebServer server(httpPort);
 // 开关的状态表示
-const int on = 0;
-const int off = 1;
+
 // 看你的继电器是连接那个io，默认gpio0
 const int logLed = 14;
 const int wifiLed = 0;
 const int primarySwitch = 16;
+// 插口
+const int plugin4 = 4;
+const int plugin5 = 5;
+const int plugin6 = 6;
+// 总开关
+const int plugin7 = 7;
 // 开关的当前状态
-int logLedStatus = on;
-int wifiLedStatus = on;
-int primarySwitchStatus = on;
+int logLedStatus = ON;
+int wifiLedStatus = ON;
+int primarySwitchStatus = ON;
+// 插口
+int plugin4Status = ON;
+int plugin5Status = ON;
+int plugin6Status = ON;
+// 总开关
+int plugin7Status = 7;
+
 // digitalWrite(led1, on);
 
 // web服务器的根目录
@@ -32,38 +47,63 @@ void handleRoot() {
   server.send(200, "text/html", "<h1>this is index page from esp8266!</h1>");
 }
 // 操作LED开关状态的API
-void handleLEDStatusChange(){
+void handleSwitchStatusChange(){
   String message = "{\"code\":0,\"message\":\"success\"}";
   for (uint8_t i=0; i<server.args(); i++){
-    if (server.argName(i)=="pin")
+    if (server.argName(i)=="on")
     {
       // 开启
-      if (server.arg(i)=="ONlogLed")
+      if (server.arg(i)=="logLed")
       {
-        digitalWrite(logLed, on);
-        logLedStatus = on;
-      }else if (server.arg(i)=="ONwifiLed")
+        digitalWrite(logLed, ON);
+        logLedStatus = ON;
+      }else if (server.arg(i)=="wifiLed")
       {
-        digitalWrite(wifiLed, on);
-        wifiLedStatus = on;
-      }else if (server.arg(i)=="ONprimarySwitch")
+        digitalWrite(wifiLed, ON);
+        wifiLedStatus = ON;
+      }else if (server.arg(i)=="plugin4")
       {
-        digitalWrite(primarySwitch, on);
-        primarySwitchStatus = on;
+        CAT9554.digitalWrite(plugin4, ON);
+        plugin4Status = ON;
+      }else if (server.arg(i)=="plugin5")
+      {
+        CAT9554.digitalWrite(plugin5, ON);
+        plugin5Status = ON;
+      }else if (server.arg(i)=="plugin6")
+      {
+        CAT9554.digitalWrite(plugin6, ON);
+        plugin6Status = ON;
+      }else if (server.arg(i)=="plugin7")
+      {
+        CAT9554.digitalWrite(plugin7, ON);
+        plugin7Status = ON;
       }
+    }else if (server.argName(i)=="off"){
       // 关闭
-      else if (server.arg(i)=="OFFlogLed")
+      if (server.arg(i)=="logLed")
       {
-        digitalWrite(logLed, off);
-        logLedStatus = off;
-      }else if (server.arg(i)=="OFFwifiLed")
+        digitalWrite(logLed, OFF);
+        logLedStatus = OFF;
+      }else if (server.arg(i)=="wifiLed")
       {
-        digitalWrite(wifiLed, off);
-        wifiLedStatus = off;
-      }else if (server.arg(i)=="OFFprimarySwitch")
+        digitalWrite(wifiLed, OFF);
+        wifiLedStatus = OFF;
+      }else if (server.arg(i)=="plugin4")
       {
-        digitalWrite(primarySwitch, off);
-        primarySwitchStatus = off;
+        CAT9554.digitalWrite(plugin4, OFF);
+        plugin4Status = OFF;
+      }else if (server.arg(i)=="plugin5")
+      {
+        CAT9554.digitalWrite(plugin5, OFF);
+        plugin5Status = OFF;
+      }else if (server.arg(i)=="plugin6")
+      {
+        CAT9554.digitalWrite(plugin6, OFF);
+        plugin6Status = OFF;
+      }else if (server.arg(i)=="plugin7")
+      {
+        CAT9554.digitalWrite(plugin7, OFF);
+        plugin7Status = OFF;
       }
     }
   }
@@ -106,7 +146,6 @@ void handleCSE7766(){
   String message = "{\"code\":0,\"value\":"+String(value)+",\"message\":\"success\"}";
   server.send(200, "application/json", message);
 }
-
 // 当前的LED开关状态API
 void handleCurrentLEDStatus(){
   String message;
@@ -163,17 +202,22 @@ void setup(void){
   CAT9554.pinMode(0, INPUT);
   CAT9554.pinMode(1, INPUT);
   CAT9554.pinMode(2, INPUT);
+
   CAT9554.pinMode(4, OUTPUT);
+  CAT9554.digitalWrite(4, ON);
   CAT9554.pinMode(5, OUTPUT);
+  CAT9554.digitalWrite(5, ON);
   CAT9554.pinMode(6, OUTPUT);
+  CAT9554.digitalWrite(6, ON);
   CAT9554.pinMode(7, OUTPUT);
+  CAT9554.digitalWrite(7, ON);
     // 开关状态初始化为开
   pinMode(logLed, OUTPUT);
-  digitalWrite(logLed, on);
+  digitalWrite(logLed, ON);
   pinMode(wifiLed, OUTPUT);
-  digitalWrite(wifiLed, on);
+  digitalWrite(wifiLed, ON);
   pinMode(primarySwitch, OUTPUT);
-  digitalWrite(primarySwitch, on);
+  digitalWrite(primarySwitch, ON);
 
   // Serial.begin(115200);
   WiFi.mode(WIFI_STA);
@@ -199,7 +243,7 @@ void setup(void){
   }
 
   server.on("/", handleRoot);
-  server.on("/led", handleLEDStatusChange);
+  server.on("/switch", handleSwitchStatusChange);
   server.on("/rename", handleDeviceRename);
   server.on("/status", handleCurrentLEDStatus);
   // about this device
@@ -218,14 +262,4 @@ void loop(void){
   MDNS.update();
   server.handleClient();
   myCSE7766.handle();
-
-  // CAT9554.digitalWrite(4, HIGH);
-  // CAT9554.digitalWrite(5, HIGH);
-  // CAT9554.digitalWrite(6, HIGH);
-  // CAT9554.digitalWrite(7, HIGH);
-  // delay(100);
-  // CAT9554.digitalWrite(4, LOW);
-  // CAT9554.digitalWrite(5, LOW);
-  // CAT9554.digitalWrite(6, LOW);
-  // CAT9554.digitalWrite(7, LOW);
 }
