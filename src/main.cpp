@@ -147,9 +147,9 @@ void handleCurrentLEDStatus(){
   message = "{\"logLed\":"+String(logLedStatus)+
   ",\"wifiLed\":"+String(wifiLedStatus)+
   ",\"plugin4\":"+String(plugin4Status)+
-  ",\"plugin5\":"+String(plugin4Status)+
-  ",\"plugin6\":"+String(plugin4Status)+
-  ",\"plugin7\":"+String(plugin4Status)+
+  ",\"plugin5\":"+String(plugin5Status)+
+  ",\"plugin6\":"+String(plugin6Status)+
+  ",\"plugin7\":"+String(plugin7Status)+
   ",\"code\":0,\"message\":\"success\"}";
   server.send(200, "application/json", message);
 }
