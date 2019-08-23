@@ -226,7 +226,9 @@ void setup(void){
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
+    digitalWrite(logLed, HIGH);
     delay(500);
+    digitalWrite(logLed, LOW);
     // Serial.print(".");
   }
   // Serial.println("");
