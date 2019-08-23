@@ -150,7 +150,7 @@ void handleCurrentLEDStatus(){
   ",\"plugin5\":"+String(plugin5Status)+
   ",\"plugin6\":"+String(plugin6Status)+
   ",\"plugin7\":"+String(plugin7Status)+
-  ",\"Voltage\":"+String(myCSE7766.getCurrent())+
+  ",\"Voltage\":"+String(myCSE7766.getVoltage())+
   ",\"Current\":"+String(myCSE7766.getCurrent())+
   ",\"ActivePower\":"+String(myCSE7766.getActivePower())+
   ",\"ApparentPower\":"+String(myCSE7766.getApparentPower())+
