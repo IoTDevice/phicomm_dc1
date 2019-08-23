@@ -150,6 +150,13 @@ void handleCurrentLEDStatus(){
   ",\"plugin5\":"+String(plugin5Status)+
   ",\"plugin6\":"+String(plugin6Status)+
   ",\"plugin7\":"+String(plugin7Status)+
+  ",\"Voltage\":"+String(myCSE7766.getCurrent())+
+  ",\"Current\":"+String(myCSE7766.getCurrent())+
+  ",\"ActivePower\":"+String(myCSE7766.getActivePower())+
+  ",\"ApparentPower\":"+String(myCSE7766.getApparentPower())+
+  ",\"ReactivePower\":"+String(myCSE7766.getReactivePower())+
+  ",\"PowerFactor\":"+String(myCSE7766.getPowerFactor())+
+  ",\"Energy\":"+String(myCSE7766.getEnergy())+
   ",\"code\":0,\"message\":\"success\"}";
   server.send(200, "application/json", message);
 }
