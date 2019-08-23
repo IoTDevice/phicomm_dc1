@@ -197,6 +197,7 @@ void setup(void){
   Wire.setClock(20000);
   CAT9554.begin();
   // CAT9554.begin(SDA_PIN, SCL_PIN);
+  // 按钮检测，总开关GPIO16，其他插孔:
   CAT9554.pinMode(0, INPUT);
   CAT9554.pinMode(1, INPUT);
   CAT9554.pinMode(2, INPUT);
