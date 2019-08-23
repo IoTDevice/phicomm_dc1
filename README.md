@@ -5,6 +5,8 @@
 众所周知的原因，斐讯服务器已经不能正常访问，插座的APP控制已经无法正常实现，需要有另外的方式实现插座的控制。根据[Samuel-0-0](https://github.com/Samuel-0-0/phicomm_dc1-esphome)开源的硬件文档开发
 ## 特色 
 固件里面不包含固定的wifi信息，使用[开源APP](https://github.com/nat-cloud/android-explorer)实现配网，设备发现，局域网控制及远程控制的功能 
+## 项目进度 
+当前支持获取电力统计信息，局域网和远程APP控制，插排上的实体按键还未去实现，所以所有操作只能通过app进行 
 ## 刷机方法
 可以参照[Samuel-0-0的刷机文档](https://github.com/Samuel-0-0/phicomm_dc1-esphome/tree/master/cookbook)
 ## 致谢
