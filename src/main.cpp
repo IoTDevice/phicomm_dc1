@@ -244,7 +244,7 @@ void setup(void){
   // Serial.print("IP address: ");
   // Serial.println(WiFi.localIP());
 
-  if (MDNS.begin("esp8266")) {
+  if (MDNS.begin("phicomm-dc1-"+String(ESP.getFlashChipId()))) {
     // Serial.println("MDNS responder started");
   }
 
