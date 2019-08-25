@@ -16,10 +16,10 @@ https://github.com/iotdevice/phicomm_dc1/releases
 - 如果你想外网访问请安装此软件配套的内外管理程序，地址：https://github.com/nat-cloud/android-client (安卓版) 或者https://github.com/nat-cloud/client (其他版本)
 - 程序安装和使用参考：https://www.jianshu.com/p/112c1583889f
 ### app操作界面 
-![image](./设备列表.png)
-![image](./设备操作界面.png)
-![image](./设置设备名称.png)
-![image](./设备信息.png)
+![image](./images/设备列表.png)
+![image](./images/设备操作界面.png)
+![image](./images/设置设备名称.png)
+![image](./images/设备信息.png)
 ## 致谢
 以下排名不分先后，为随机。
 - [Samuel-0-0](https://github.com/Samuel-0-0/phicomm_dc1-esphome)：硬件信息的详细文档
