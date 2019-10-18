@@ -12,7 +12,7 @@
 CSE7766 myCSE7766;
 const int httpPort = 80;
 String deviceName = "斐讯DC1插排";
-String version = "1.0";
+String version = "1.1";
 ESP8266WebServer server(httpPort);
 const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 // 看你的继电器是连接那个io，默认gpio0
