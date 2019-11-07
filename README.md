@@ -1,6 +1,7 @@
 # phicomm_dc1
 斐讯插排DC1第三方开源固件
 ![image](https://github.com/Samuel-0-0/dc1-esphome-home-assistant/blob/master/image/%E4%BA%A7%E5%93%81%E5%9B%BE2.jpg?raw=true)
+如果你需要斐讯TC1 a1插排的远程控制，请看：[TC1](https://github.com/IoTDevice/phicomm_tc1_a1)
 ## WHY
 众所周知的原因，斐讯服务器已经不能正常访问，插座的APP控制已经无法正常实现，需要有另外的方式实现插座的控制。根据[Samuel-0-0](https://github.com/Samuel-0-0/phicomm_dc1-esphome)开源的硬件文档开发
 ## 特色 
