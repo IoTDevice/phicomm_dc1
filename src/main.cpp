@@ -292,4 +292,8 @@ void loop(void){
   MDNS.update();
   server.handleClient();
   myCSE7766.handle();
+  if(!WiFi.isConnected){
+    WiFi.reconnect();
+    delay(500);
+  }
 }
