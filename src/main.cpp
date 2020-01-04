@@ -235,8 +235,8 @@ void setup(void){
   MDNS.addServiceTxt("iotdevice", "tcp", "model", "com.iotserv.devices.phicomm_dc1");
   MDNS.addServiceTxt("iotdevice", "tcp", "mac", WiFi.macAddress());
   MDNS.addServiceTxt("iotdevice", "tcp", "id", ESP.getSketchMD5());
-  MDNS.addServiceTxt("iotdevice", "tcp", "ui-support", "web,native");
-  MDNS.addServiceTxt("iotdevice", "tcp", "ui-first", "native");
+  // MDNS.addServiceTxt("iotdevice", "tcp", "ui-support", "web,native");
+  // MDNS.addServiceTxt("iotdevice", "tcp", "ui-first", "native");
   MDNS.addServiceTxt("iotdevice", "tcp", "author", "Farry");
   MDNS.addServiceTxt("iotdevice", "tcp", "email", "newfarry@126.com");
   MDNS.addServiceTxt("iotdevice", "tcp", "home-page", "https://github.com/iotdevice");
