@@ -1,4 +1,5 @@
 # phicomm_dc1
+[![Build Status](https://www.travis-ci.com/IoTDevice/phicomm_dc1.svg?branch=master)](https://www.travis-ci.com/IoTDevice/phicomm_dc1)
 斐讯插排DC1第三方开源固件
 ![image](https://github.com/Samuel-0-0/dc1-esphome-home-assistant/blob/master/image/%E4%BA%A7%E5%93%81%E5%9B%BE2.jpg?raw=true)
 如果你需要斐讯TC1 a1插排的远程控制，请看：[TC1](https://github.com/IoTDevice/phicomm_tc1_a1)
