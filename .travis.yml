@@ -59,4 +59,4 @@ install:
     - platformio update
 
 script:
-    - platformio ci --lib="." --project-conf=platformio.ini src/main.cpp
+    - platformio ci --lib="./lib" --project-conf=platformio.ini src/main.cpp
