@@ -9,7 +9,8 @@ install:
 - pip install -U platformio
 - platformio update
 script:
-- platformio ci --keep-build-dir --lib="./lib/cat9554" --lib="./lib/cse7766" --project-conf=platformio.ini
+- mkdir build
+- platformio ci --keep-build-dir --build-dir ./build --lib="./lib/cat9554" --lib="./lib/cse7766" --project-conf=platformio.ini
   src/main.cpp
 before_deploy:
 - platformio ci -h
