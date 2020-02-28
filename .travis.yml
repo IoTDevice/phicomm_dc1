@@ -12,7 +12,7 @@ script:
 - platformio ci --lib="./lib/cat9554" --lib="./lib/cse7766" --project-conf=platformio.ini
   src/main.cpp
 before_deploy:
-- ls ./.pio
+- ls
 - mkdir release
 - cp ./.pio/build/d1/firmware.bin release/firmware.bin
 deploy:
