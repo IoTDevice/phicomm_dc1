@@ -243,17 +243,17 @@ void handleNotFound(){
 
 void setup(void){
   // 电力芯片
-  myCSE7766.setRX(13);
+  myCSE7766.setRX(CSE7766_RX_PIN);
   myCSE7766.begin();
-  // IO扩展
+  // IO扩展CAT9554
   Wire.begin(CAT9554_SDA_PIN, CAT9554_SCL_PIN);
-  Wire.setClock(20000);
+  Wire.setClock(4800);
   CAT9554.begin();
   // CAT9554.begin(SDA_PIN, SCL_PIN);
   // 按钮检测，总开关GPIO16，其他插孔:
-  CAT9554.pinMode(0, INPUT);
-  CAT9554.pinMode(1, INPUT);
-  CAT9554.pinMode(2, INPUT);
+  CAT9554.pinMode(KEY_0_PIN, INPUT);
+  CAT9554.pinMode(KEY_1_PIN, INPUT);
+  CAT9554.pinMode(KEY_2_PIN, INPUT);
 // 初始化全开
   CAT9554.pinMode(REL_3_PIN, OUTPUT);
   CAT9554.digitalWrite(REL_3_PIN, HIGH);

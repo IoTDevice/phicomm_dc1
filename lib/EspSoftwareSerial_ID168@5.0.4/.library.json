@@ -1,0 +1,42 @@
+{
+    "name": "EspSoftwareSerial", 
+    "version": "5.0.4", 
+    "keywords": [
+        "serial", 
+        "io", 
+        "softwareserial"
+    ], 
+    "description": "Implementation of the Arduino software serial for ESP8266/ESP32.", 
+    "repository": {
+        "type": "git", 
+        "url": "https://github.com/plerup/espsoftwareserial"
+    }, 
+    "frameworks": [
+        "arduino"
+    ], 
+    "platforms": [
+        "atmelavr", 
+        "atmelsam", 
+        "espressif32", 
+        "espressif8266", 
+        "infineonxmc", 
+        "intel_arc32", 
+        "kendryte210", 
+        "microchippic32", 
+        "nordicnrf51", 
+        "nordicnrf52", 
+        "ststm32", 
+        "ststm8", 
+        "teensy", 
+        "timsp430"
+    ], 
+    "authors": [
+        {
+            "email": null, 
+            "url": "https://github.com/plerup", 
+            "maintainer": false, 
+            "name": "Peter Lerup"
+        }
+    ], 
+    "id": 168
+}
