@@ -103,7 +103,8 @@ void smartConfig()//配网函数
 
 // web服务器的根目录
 void handleRoot() {
-  server.send(200, "text/html", "<h1>this is index page from esp8266!</h1>");
+    server.sendHeader("Connection", "close");
+    server.send(200, "text/html", serverIndex);
 }
 // 操作LED开关状态的API
 void handleSwitchStatusChange(){
