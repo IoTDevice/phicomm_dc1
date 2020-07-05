@@ -36,7 +36,7 @@ const int httpPort = 80;
 String deviceName = "斐讯DC1插排";
 String version = "1.1";
 ESP8266WebServer server(httpPort);
-const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
+const char* serverIndex = "<h1>更新固件：</h1><form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='开始上传升级'></form>";
 // 开关的当前状态
 bool logLedStatus = true;
 bool wifiLedStatus = true;
