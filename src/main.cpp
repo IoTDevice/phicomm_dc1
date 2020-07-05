@@ -6,8 +6,30 @@
 #include <CAT9554.h>
 #include <Wire.h>
 
-#define SDA_PIN      3
-#define SCL_PIN      12
+#include <EEPROM.h> //导入Flash库文件
+
+#define CAT9554_SDA_PIN 3
+#define CAT9554_SCL_PIN 12
+#define CAT9554_IRQ_PIN 4
+
+#define CSE7766_RX_PIN 13
+#define CSE7766_BAUDRATE 4800
+
+#define LED_PIN 0       // 指示灯
+#define LOGO_LED_PIN 14 // Logo指示灯
+
+#define KEY_0_PIN 16 // 总开关
+#define KEY_1_PIN 0  // 开关1
+#define KEY_2_PIN 1  // 开关2
+#define KEY_3_PIN 2  // 开关3
+
+#define REL_0_PIN 7 // 总继电器
+#define REL_1_PIN 6 // 继电器1
+#define REL_2_PIN 5 // 继电器2
+#define REL_3_PIN 4 // 继电器3
+
+String ssid;
+String psw;
 
 CSE7766 myCSE7766;
 const int httpPort = 80;
@@ -15,15 +37,6 @@ String deviceName = "斐讯DC1插排";
 String version = "1.1";
 ESP8266WebServer server(httpPort);
 const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
-// 看你的继电器是连接那个io，默认gpio0
-const int logLed = 14;
-const int wifiLed = 0;
-// 插口
-const int plugin4 = 4;
-const int plugin5 = 5;
-const int plugin6 = 6;
-// 总开关
-const int plugin7 = 7;
 // 开关的当前状态
 bool logLedStatus = true;
 bool wifiLedStatus = true;
@@ -34,7 +47,59 @@ bool plugin6Status = true;
 // 总开关
 bool plugin7Status = true;
 
-// digitalWrite(led1, on);
+struct config_type
+{
+  char stassid[32];//定义配网得到的WIFI名长度(最大32字节)
+  char stapsw[64];//定义配网得到的WIFI密码长度(最大64字节)
+};
+
+config_type config;//声明定义内容
+
+void saveConfig()//保存函数
+{
+ EEPROM.begin(1024);//向系统申请1024kb ROM
+ //开始写入
+ uint8_t *p = (uint8_t*)(&config);
+  for (int i = 0; i < sizeof(config); i++)
+  {
+    EEPROM.write(i, *(p + i)); //在闪存内模拟写入
+  }
+  EEPROM.commit();//执行写入ROM
+}
+
+void loadConfig()//读取函数
+{
+  EEPROM.begin(1024);
+  uint8_t *p = (uint8_t*)(&config);
+  for (int i = 0; i < sizeof(config); i++)
+  {
+    *(p + i) = EEPROM.read(i);
+  }
+  EEPROM.commit();
+  ssid = config.stassid;
+  psw = config.stapsw;
+}
+
+void smartConfig()//配网函数
+{
+  // 等待配网
+  WiFi.beginSmartConfig();
+  while(1)
+    {
+      digitalWrite(LED_PIN, LOW);  //加个LED快闪，确认配网是否成功！成功就不闪了。
+      delay(200);                    
+      digitalWrite(LED_PIN, HIGH);   
+      delay(200);
+      if (WiFi.smartConfigDone())
+      {
+        strcpy(config.stassid,WiFi.SSID().c_str());//名称复制
+        strcpy(config.stapsw,WiFi.psk().c_str());//密码复制
+        saveConfig();//调用保存函数
+        WiFi.setAutoConnect(true);  // 设置自动连接
+        break;
+      }
+    }
+}
 
 // web服务器的根目录
 void handleRoot() {
@@ -49,54 +114,54 @@ void handleSwitchStatusChange(){
       // 开启
       if (server.arg(i)=="logLed")
       {
-        digitalWrite(logLed, LOW);
+        digitalWrite(LOGO_LED_PIN, LOW);
         logLedStatus = true;
       }else if (server.arg(i)=="wifiLed")
       {
-        digitalWrite(wifiLed, LOW);
+        digitalWrite(LED_PIN, LOW);
         wifiLedStatus = true;
       }else if (server.arg(i)=="plugin4")
       {
-        CAT9554.digitalWrite(plugin4, HIGH);
+        CAT9554.digitalWrite(REL_3_PIN, HIGH);
         plugin4Status = true;
       }else if (server.arg(i)=="plugin5")
       {
-        CAT9554.digitalWrite(plugin5, HIGH);
+        CAT9554.digitalWrite(REL_2_PIN, HIGH);
         plugin5Status = true;
       }else if (server.arg(i)=="plugin6")
       {
-        CAT9554.digitalWrite(plugin6, HIGH);
+        CAT9554.digitalWrite(REL_1_PIN, HIGH);
         plugin6Status = true;
       }else if (server.arg(i)=="plugin7")
       {
-        CAT9554.digitalWrite(plugin7, HIGH);
+        CAT9554.digitalWrite(REL_0_PIN, HIGH);
         plugin7Status = true;
       }
     }else if (server.argName(i)=="off"){
       // 关闭
       if (server.arg(i)=="logLed")
       {
-        digitalWrite(logLed, HIGH);
+        digitalWrite(LOGO_LED_PIN, HIGH);
         logLedStatus = false;
       }else if (server.arg(i)=="wifiLed")
       {
-        digitalWrite(wifiLed, HIGH);
+        digitalWrite(LED_PIN, HIGH);
         wifiLedStatus = false;
       }else if (server.arg(i)=="plugin4")
       {
-        CAT9554.digitalWrite(plugin4, LOW);
+        CAT9554.digitalWrite(REL_3_PIN, LOW);
         plugin4Status = false;
       }else if (server.arg(i)=="plugin5")
       {
-        CAT9554.digitalWrite(plugin5, LOW);
+        CAT9554.digitalWrite(REL_2_PIN, LOW);
         plugin5Status = false;
       }else if (server.arg(i)=="plugin6")
       {
-        CAT9554.digitalWrite(plugin6, LOW);
+        CAT9554.digitalWrite(REL_1_PIN, LOW);
         plugin6Status = false;
       }else if (server.arg(i)=="plugin7")
       {
-        CAT9554.digitalWrite(plugin7, LOW);
+        CAT9554.digitalWrite(REL_0_PIN, LOW);
         plugin7Status = false;
       }
     }
@@ -181,7 +246,7 @@ void setup(void){
   myCSE7766.setRX(13);
   myCSE7766.begin();
   // IO扩展
-  Wire.begin(SDA_PIN, SCL_PIN);
+  Wire.begin(CAT9554_SDA_PIN, CAT9554_SCL_PIN);
   Wire.setClock(20000);
   CAT9554.begin();
   // CAT9554.begin(SDA_PIN, SCL_PIN);
@@ -189,42 +254,44 @@ void setup(void){
   CAT9554.pinMode(0, INPUT);
   CAT9554.pinMode(1, INPUT);
   CAT9554.pinMode(2, INPUT);
-
-  CAT9554.pinMode(4, OUTPUT);
-  CAT9554.digitalWrite(4, HIGH);
-  CAT9554.pinMode(5, OUTPUT);
-  CAT9554.digitalWrite(5, HIGH);
-  CAT9554.pinMode(6, OUTPUT);
-  CAT9554.digitalWrite(6, HIGH);
-  CAT9554.pinMode(7, OUTPUT);
-  CAT9554.digitalWrite(7, HIGH);
+// 初始化全开
+  CAT9554.pinMode(REL_3_PIN, OUTPUT);
+  CAT9554.digitalWrite(REL_3_PIN, HIGH);
+  CAT9554.pinMode(REL_2_PIN, OUTPUT);
+  CAT9554.digitalWrite(REL_2_PIN, HIGH);
+  CAT9554.pinMode(REL_1_PIN, OUTPUT);
+  CAT9554.digitalWrite(REL_1_PIN, HIGH);
+  CAT9554.pinMode(REL_0_PIN, OUTPUT);
+  CAT9554.digitalWrite(REL_0_PIN, HIGH);
     // 开关状态初始化为开
-  pinMode(logLed, OUTPUT);
-  digitalWrite(logLed, LOW);
-  pinMode(wifiLed, OUTPUT);
-  digitalWrite(wifiLed, LOW);
+  pinMode(LOGO_LED_PIN, OUTPUT);
+  digitalWrite(LOGO_LED_PIN, LOW);
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, LOW);
 
   // Serial.begin(115200);
   WiFi.mode(WIFI_STA);
+  delay(500);
   // 选取一种连接路由器的方式 
   // WiFi.begin(ssid, password);
-  WiFi.beginSmartConfig();
-
-  // Serial.println("");
-
-  // Wait for connection
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    digitalWrite(wifiLed, HIGH);
-    delay(500);
-    digitalWrite(wifiLed, LOW);
-    // Serial.print(".");
+  ESP.wdtEnable(10000);//设定看门狗
+  loadConfig();//读取ROM是否包含密码
+  //判断ROM是否有密码
+  if(ssid!=0&&psw!=0){
+    WiFi.begin(ssid,psw);//如果有密码则自动连接
+    while(WiFi.status()!= WL_CONNECTED){
+      if(digitalRead(KEY_0_PIN)== LOW){
+        smartConfig();//如果配网按钮被按下则停止当前连接开始配网
+        break;//跳出所有循环进入主程序
+      }
+      digitalWrite(LED_PIN, LOW);  //加个LED慢闪，确认联网是否成功！成功就不闪了。
+      delay(1000);                    
+      digitalWrite(LED_PIN, HIGH);   
+      delay(1000);
+    }
+  }else{
+    smartConfig();//如果ROM没有密码则自动进入配网模式
   }
-  // Serial.println("");
-  // Serial.print("Connected to ");
-  // Serial.println(ssid);
-  // Serial.print("IP address: ");
-  // Serial.println(WiFi.localIP());
 
   if (MDNS.begin("phicomm-dc1-"+String(ESP.getFlashChipId()))) {
     // Serial.println("MDNS responder started");
@@ -289,6 +356,10 @@ void setup(void){
 }
 
 void loop(void){
+ ESP.wdtFeed();//先喂狗释放资源
+ if(digitalRead(KEY_0_PIN)== 0)delay(2000);if(digitalRead(KEY_0_PIN)==0)smartConfig();//如果配网按钮被按下则停止所有任务开始重新配网
+  ESP.wdtFeed();//再喂狗释放资源
+
   MDNS.update();
   server.handleClient();
   myCSE7766.handle();
