@@ -10,7 +10,7 @@ install:
 - platformio update
 script:
 - mkdir build
-- platformio ci --keep-build-dir --build-dir ./build --lib="./lib/cat9554" --lib="./lib/cse7766" --project-conf=platformio.ini
+- platformio ci --keep-build-dir --build-dir ./build --lib="./lib/cat9554" --lib="./lib/cse7766" --lib="./lib/EspSoftwareSerial_ID168@5.0.4" --project-conf=platformio.ini
   src/main.cpp
 before_deploy:
 - platformio ci -h
