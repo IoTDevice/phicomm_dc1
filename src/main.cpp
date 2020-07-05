@@ -34,9 +34,9 @@ String psw;
 CSE7766 myCSE7766;
 const int httpPort = 80;
 String deviceName = "斐讯DC1插排";
-String version = "1.1";
+String version = "1.2";
 ESP8266WebServer server(httpPort);
-const char* serverIndex = "<h1>更新固件：</h1><form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='开始上传升级'></form>";
+const char* serverIndex = "<!DOCTYPE html><html><head><meta charset='utf-8'><title>更新固件</title></head><body><h1>更新固件：</h1><form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='开始上传升级'></form></body></html>";
 // 开关的当前状态
 bool logLedStatus = true;
 bool wifiLedStatus = true;
@@ -318,6 +318,11 @@ void setup(void){
 
   server.on("/cse7766", handleCSE7766);
 
+  server.on("/update", HTTP_GET, []() {
+    server.sendHeader("Connection", "close");
+    server.send(200, "text/html", "固件更新成功，新版本：" + version);
+  }
+  );
   server.on("/update", HTTP_POST, []() {
     server.sendHeader("Connection", "close");
     server.send(200, "text/plain", (Update.hasError()) ? "{\"code\":1,\"message\":\"fail\"}" : "{\"code\":0,\"message\":\"success\"}");
