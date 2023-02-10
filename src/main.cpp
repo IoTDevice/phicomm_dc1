@@ -103,7 +103,10 @@ void smartConfig()//配网函数
 
 // web服务器的根目录
 void handleRoot() {
-  server.send(200, "text/html", "<h1>this is index page from esp8266!</h1>");
+  server.send(200, "text/html", "<html><head><title>DC1</title><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\"></head><h1>斐讯DC1插排</h1><a href=\"/ota\">网页OTA</a><br><a href=\"/reboot\">重启</a></html>");
+}
+void handleReboot() {
+  ESP.restart();
 }
 // 操作LED开关状态的API
 void handleSwitchStatusChange(){
@@ -279,7 +282,7 @@ void setup(void){
   //判断ROM是否有密码
   if(ssid!=0&&psw!=0){
     WiFi.begin(ssid,psw);//如果有密码则自动连接
-    while(WiFi.status()!= WL_CONNECTED){
+    while(!WiFi.isConnected()){
       if(digitalRead(KEY_0_PIN)== LOW){
         smartConfig();//如果配网按钮被按下则停止当前连接开始配网
         break;//跳出所有循环进入主程序
@@ -289,6 +292,7 @@ void setup(void){
       digitalWrite(LED_PIN, HIGH);   
       delay(1000);
     }
+    WiFi.setAutoConnect(true);  // 设置自动连接
   }else{
     smartConfig();//如果ROM没有密码则自动进入配网模式
   }
@@ -311,6 +315,7 @@ void setup(void){
   MDNS.addServiceTxt("iotdevice", "tcp", "firmware-version", version);
 
   server.on("/", handleRoot);
+  server.on("/reboot", handleReboot);
   server.on("/switch", handleSwitchStatusChange);
   server.on("/rename", handleDeviceRename);
   server.on("/status", handleCurrentLEDStatus);
@@ -363,8 +368,4 @@ void loop(void){
   MDNS.update();
   server.handleClient();
   myCSE7766.handle();
-  if(WiFi.status() != WL_CONNECTED){
-    WiFi.reconnect();
-    delay(500);
-  }
 }

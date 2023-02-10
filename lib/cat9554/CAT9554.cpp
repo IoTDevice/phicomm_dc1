@@ -147,6 +147,7 @@ boolean CAT9554Class::digitalWrite(uint8_t pin, boolean val)
   }
 
   writeRegister(CAT9554_ADDRESS, CAT9554_REG_OUT, m_out);
+  return true;
 }
 
 /***************************************************************************
